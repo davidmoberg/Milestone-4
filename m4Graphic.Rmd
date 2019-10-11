@@ -1,0 +1,29 @@
+---
+title: "M4 Graphic"
+author: "David Moberg"
+date: "10/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, messages = FALSE, warning = FALSE)
+library(tidyverse)
+library(janitor)
+library(readxl)
+library(knitr)
+```
+
+```{r Read in and clean the data I need}
+m4Data <- read_xlsx(path = "raw-data/august2019/Table_1_11_B.xlsx", skip = 5)%>%head(-2)%>%clean_names()%>%select("census_division_and_state", "june_2019_ytd_2", "june_2018_ytd_3", "percentage_change")
+
+
+plotData<-subset(m4Data, census_division_and_state %in% c("New England", "Middle Atlantic", "East North Central", "West North Central", "South Atlantic", "East South Central", "West South Central", "Mountain", "Pacific Contiguous", "Pacific Noncontiguous"))
+
+
+
+energyPlot <- ggplot(plotData, aes(x=june_2019_ytd_2, y=june_2018_ytd_3, size =percentage_change, color = census_division_and_state)) +geom_point()
+
+suppressWarnings(energyPlot)
+```
+
+
