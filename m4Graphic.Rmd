@@ -10,18 +10,23 @@ knitr::opts_chunk$set(echo = FALSE, messages = FALSE, warning = FALSE)
 library(tidyverse)
 library(janitor)
 library(readxl)
-library(knitr)
+library(gt)
+library(plotly)
 ```
 
 ```{r Read in and clean the data I need}
 m4Data <- read_xlsx(path = "raw-data/august2019/Table_1_11_B.xlsx", skip = 5)%>%head(-2)%>%clean_names()%>%select("census_division_and_state", "june_2019_ytd_2", "june_2018_ytd_3", "percentage_change")
 
 
-plotData<-subset(m4Data, census_division_and_state %in% c("New England", "Middle Atlantic", "East North Central", "West North Central", "South Atlantic", "East South Central", "West South Central", "Mountain", "Pacific Contiguous", "Pacific Noncontiguous"))
+
+plotData<-subset(m4Data, census_division_and_state %in% c("New England", "Middle Atlantic", "East North Central", "West North Central", "South Atlantic", "East South Central", "West South Central", "Mountain", "Pacific Contiguous", "Pacific Noncontiguous"))%>%gt()
 
 
+plotData<- plotData%>%mutate(yearDiff = june_2019_ytd_2-june_2018_ytd_3)
 
-energyPlot <- ggplot(plotData, aes(x=june_2019_ytd_2, y=june_2018_ytd_3, size =percentage_change, color = census_division_and_state)) +geom_point()
+energyPlot <- ggplot(plotData, aes(x=census_division_and_state, y=yearDiff, color = census_division_and_state, fill = census_division_and_state)) + geom_col()+theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+labs(title = "Change in Electrical Consumption from 2018 to 2019", subtitle = "Measured by region of the US", y="Thousand Megawatt-Hours", fill = "Region of the US") + guides(color = FALSE)
 
 suppressWarnings(energyPlot)
 ```
