@@ -12,13 +12,16 @@ library(janitor)
 library(readxl)
 library(gt)
 library(plotly)
+library(reprex)
 ```
 
-```{r Read in and clean the data I need}
-m4Data <- read_xlsx(path = "raw-data/august2019/Table_1_11_B.xlsx", skip = 5)%>%head(-2)%>%clean_names()%>%select("census_division_and_state", "june_2019_ytd_2", "june_2018_ytd_3", "percentage_change")
+```{r Read in and clean the data I need, include=FALSE}
+m4Data <- read_xlsx(path = "raw-data/august2019/Table_1_11_B.xlsx", skip = 5)
+m4Data<-m4Data%>%head(-2)%>%clean_names()%>%select("census_division_and_state", "june_2019_ytd_2", "june_2018_ytd_3", "percentage_change")
 
+```
 
-
+```{r Create graph}
 plotData<-subset(m4Data, census_division_and_state %in% c("New England", "Middle Atlantic", "East North Central", "West North Central", "South Atlantic", "East South Central", "West South Central", "Mountain", "Pacific Contiguous", "Pacific Noncontiguous"))%>%gt()
 
 
